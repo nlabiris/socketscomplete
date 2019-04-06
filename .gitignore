@@ -1,0 +1,8 @@
+.vs
+app.config
+/bin
+/obj
+/SocketsServer/bin
+/SocketsServer/obj
+/SocketsClient/bin
+/SocketsClient/obj

@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SocketsComplete.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DatabaseUsed" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">MySql</Value>
+    </Setting>
+    <Setting Name="TCPPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">666</Value>
+    </Setting>
+    <Setting Name="UDPPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">667</Value>
+    </Setting>
+    <Setting Name="DatabaseConnectionString" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">DATABASE=test;PASSWORD=1234;PORT=3306;USER ID=root;HOST=localhost;</Value>
+    </Setting>
+    <Setting Name="ShowRecievedPacketDetails" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TCPPortClient" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">666</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
