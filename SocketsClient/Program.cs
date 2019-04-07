@@ -17,7 +17,7 @@ namespace SocketsClient {
                 }
             };
 
-            byte[] data = packet.Serialize();
+            byte[] data = packet.CreatePacket();
 
             for (int i = 0; i < data.Length; i++) {
                 Console.Write("{0:X} ", data[i]);
@@ -32,16 +32,38 @@ namespace SocketsClient {
         public long Imei;
         public ushort Length;
         public Gps Gps;
+        public byte Checksum;
 
-        public byte[] Serialize() {
+        public byte[] CreatePacket() {
+            byte[] dataWithoutCs = this.Serialize();
+            this.Checksum = this.CountCheckSum(dataWithoutCs, dataWithoutCs.Length - 1);
+            return this.Serialize();
+        }
+
+        private byte[] Serialize() {
             using (MemoryStream m = new MemoryStream()) {
                 using (BinaryWriter writer = new BinaryWriter(m)) {
                     writer.Write(Imei);
                     writer.Write(Length);
                     writer.Write(Gps.Serialize());
+                    writer.Write(Checksum);
                 }
                 return m.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Counts the checksum of the provided buffer
+        /// </summary>
+        /// <param name="buffer">Packet buffer</param>
+        /// <param name="length">Bytes to count from start</param>
+        /// <returns>Checksum</returns>
+        public byte CountCheckSum(byte[] buffer, int length) {
+            int sum = 0;
+            for (var i = 0; i < length; i++) {
+                sum += buffer[i];
+            }
+            return (byte)(sum & 0xFF);
         }
     }
 

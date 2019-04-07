@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SocketsComplete.Data;
 
 namespace SocketsComplete {
     internal class Parser {
@@ -27,15 +28,16 @@ namespace SocketsComplete {
 
             parsedPackets.Clear();
 
-            while (offset < buffer.Length) {
-                byte packetSize = buffer[offset];
-                offset++;
-                if (buffer.Length >= offset + packetSize) {
-                    offset += packetSize;
-                } else {
-                    return;
-                }
-            }
+            byte packetSize = buffer[offset];
+            Packet data = new Packet();
+            Gps gps = new Gps();
+            gps.Lat = BitConverter.ToSingle(buffer, offset + 0);
+            gps.Lng = BitConverter.ToSingle(buffer, offset + 4);
+            gps.Speed = BitConverter.ToInt16(buffer, offset + 8);
+            gps.Altitude = BitConverter.ToInt16(buffer, offset + 10);
+            data.Gps = gps;
+
+            parsedPackets.Add(data);
         }
 
         /// <summary>

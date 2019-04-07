@@ -13,7 +13,7 @@ namespace SocketsComplete {
             var packet = new PacketData();
             packet.Length = BitConverter.ToUInt16(ReadBlock(buffer, index, 2), 0);
             var data = ReadBlock(buffer, index + 2, packet.Length);
-            packet.Data = ReadBlock(data, 2, packet.Length - 2);
+            packet.Data = ReadBlock(data, 0, packet.Length - 1);
 
             return packet;
         }
@@ -54,36 +54,20 @@ namespace SocketsComplete {
         /// <param name="localBuffer">Packet buffer</param>
         /// <returns>Parse result object</returns>
         public static ParseResults ParseData(byte[] localBuffer) {
-            ParseResults parseResults = null;
-            try {
-                parseResults = new ParseResults();
-                parseResults.ImeiBuffer = Helper.ReadBlock(localBuffer, 0, 8);
-                var cs = localBuffer[localBuffer.Length - 1];
+            ParseResults parseResults = new ParseResults();
+            parseResults.ImeiBuffer = Helper.ReadBlock(localBuffer, 0, 8);
+            var cs = localBuffer[localBuffer.Length - 1];
 
-                if (cs == Helper.CountCheckSum(localBuffer, localBuffer.Length - 1)) {
-                    var lengthIndex = 8;
-                    var packets = new List<PacketData>();
+            var packets = new List<PacketData>();
 
-                    // Iterating in case there are multiple data sections in one package
-                    while (lengthIndex < localBuffer.Length - 1) {
-                        var packetData = Helper.GetData(localBuffer, lengthIndex);
-                        packets.Add(packetData);
-                        lengthIndex += packetData.Length + 2;
-                    }
-
-                    var parser = new Parser();
-                    foreach (var packet in packets) {
-                        parser.ParsePacket(packet.Data);
-                        parseResults.Packets.AddRange(parser.GetPackets());
-                    }
-
-                    var responseBuffer = new byte[13];
-                    for (var i = 0; i < 8; i++) {
-                        responseBuffer[i] = parseResults.ImeiBuffer[i];
-                    }
-                    parseResults.Response = responseBuffer;
-                }
-            } catch {}
+            if (cs == Helper.CountCheckSum(localBuffer, localBuffer.Length - 1)) {
+                var lengthIndex = 8;
+                var parser = new Parser();
+                var packetData = Helper.GetData(localBuffer, lengthIndex);
+                packets.Add(packetData);
+                parser.ParsePacket(packets[0].Data);
+                parseResults.Packets.AddRange(parser.GetPackets());
+            }
             return parseResults;
         }
     }
