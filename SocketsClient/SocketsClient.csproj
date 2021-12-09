@@ -46,9 +46,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SocketsComplete.csproj">
       <Project>{893ce82c-6831-425c-9ac9-9823a7d02647}</Project>
       <Name>SocketsComplete</Name>

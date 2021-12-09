@@ -4,22 +4,22 @@
     /// </summary>
     public class Server {
         private TCPServer TCP;
-        private UDPServer UDP;
+        //private UDPServer UDP;
 
         /// <summary>
         /// Constructor for server
         /// </summary>
         public Server() {
-            UDP = new UDPServer();
             TCP = new TCPServer();
+            //UDP = new UDPServer();
         }
 
         /// <summary>
         /// Starts all servers
         /// </summary>
         public void Start() {
-            UDP.Start();
             TCP.Start();
+            //UDP.Start();
         }
 
         /// <summary>
@@ -27,15 +27,15 @@
         /// </summary>
         /// <returns>Any server is running</returns>
         public bool IsActive() {
-            return UDP.Active || TCP.Active;
+            return TCP.Active;
         }
 
         /// <summary>
         /// Stops all servers
         /// </summary>
         public void Stop() {
-            UDP.Stop();
             TCP.Stop();
+            //UDP.Stop();
         }
     }
 }

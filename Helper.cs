@@ -13,7 +13,7 @@ namespace SocketsComplete {
             var packet = new PacketData();
             packet.Length = BitConverter.ToUInt16(ReadBlock(buffer, index, 2), 0);
             var data = ReadBlock(buffer, index + 2, packet.Length);
-            packet.Data = ReadBlock(data, 0, packet.Length - 1);
+            packet.Data = ReadBlock(data, 0, packet.Length);
 
             return packet;
         }

@@ -3,35 +3,43 @@ using System.IO;
 using System.Threading;
 using SocketsComplete;
 
-namespace SocketsClient {
+namespace SocketsClient
+{
     internal class Program {
         private static void Main(string[] args) {
             Packet packet = new Packet {
-                Imei = 351777042773935,
-                Length = 12,
-                Gps = new Gps {
-                    Lat = 38.03039F,
-                    Lng = 23.70840F,
-                    Speed = 25,
-                    Altitude = 100
+                Imei = 351777042773935, // 8 bytes
+                Length = 12,            // 2 bytes
+                Data = new Data {
+                    Lat = 38.03039F,    // 4 bytes
+                    Lng = 23.70840F,    // 4 bytes
+                    Speed = 25,         // 2 bytes
+                    Altitude = 100      // 2 bytes
                 }
             };
 
             byte[] data = packet.CreatePacket();
 
-            for (int i = 0; i < data.Length; i++) {
-                Console.Write("{0:X} ", data[i]);
-            }
+            //for (int i = 0; i < data.Length; i++) {
+            //    Console.Write("{0:X} ", data[i]);
+            //}
 
-            Client client = new Client("127.0.0.1");
-            client.Transmit(data);
+            Client client = new Client();
+            var socket = client.Connect();
+            for (int j = 0; j < 20; j++)
+            {
+                client.Transmit(socket, data);
+                Thread.Sleep(500);
+            }
+            client.Close(socket);
+            Console.ReadLine();
         }
     }
 
     internal class Packet {
         public long Imei;
         public ushort Length;
-        public Gps Gps;
+        public Data Data;
         public byte Checksum;
 
         public byte[] CreatePacket() {
@@ -45,7 +53,7 @@ namespace SocketsClient {
                 using (BinaryWriter writer = new BinaryWriter(m)) {
                     writer.Write(Imei);
                     writer.Write(Length);
-                    writer.Write(Gps.Serialize());
+                    writer.Write(Data.Serialize());
                     writer.Write(Checksum);
                 }
                 return m.ToArray();
@@ -67,7 +75,7 @@ namespace SocketsClient {
         }
     }
 
-    internal class Gps {
+    internal class Data {
         public float Lat;
         public float Lng;
         public short Speed;

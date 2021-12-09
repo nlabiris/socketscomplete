@@ -70,10 +70,10 @@ namespace SocketsComplete.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("666")]
-        public int TCPPortClient {
+        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        public string ServerIP {
             get {
-                return ((int)(this["TCPPortClient"]));
+                return ((string)(this["ServerIP"]));
             }
         }
     }

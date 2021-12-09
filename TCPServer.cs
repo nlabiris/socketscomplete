@@ -92,7 +92,7 @@ namespace SocketsComplete {
 
             // Create the state object.
             StateObject state = new StateObject();
-            state.workSocket = handler;
+            state.socket = handler;
 
             // Begin recieving packet.
             handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
@@ -102,7 +102,7 @@ namespace SocketsComplete {
             // Retrieve the state object and the handler socket
             // from the asynchronous state object.
             StateObject state = (StateObject)ar.AsyncState;
-            Socket handler = state.workSocket;
+            Socket handler = state.socket;
             byte[] localBuffer = null;
 
             // Try reading data from the client socket.

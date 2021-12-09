@@ -1,13 +1,30 @@
-﻿namespace SocketsComplete {
-    public class Client {
+﻿using System.Net.Sockets;
+
+namespace SocketsComplete {
+    public class Client
+    {
         private TCPClient TCP;
 
-        public Client(string serverIp) {
-            TCP = new TCPClient(serverIp);
+        public Client()
+        {
+            TCP = new TCPClient();
         }
 
-        public void Transmit(byte[] packet) {
-            TCP.Transmit(packet);
+        public Socket Connect()
+        {
+            var state = TCP.CreateSocket();
+            TCP.Connect(state.endPoint, state.socket);
+            return state.socket;
+        }
+
+        public void Transmit(Socket client, byte[] packet)
+        {
+            TCP.Transmit(client, packet);
+        }
+
+        public void Close(Socket client)
+        {
+            TCP.Close(client);
         }
     }
 }

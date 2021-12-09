@@ -1,11 +1,17 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 
 namespace SocketsComplete {
     public class StateObject {
         /// <summary>
         /// Client socket
         /// </summary>
-        public Socket workSocket = null;
+        public Socket socket = null;
+
+        /// <summary>
+        /// Client socket
+        /// </summary>
+        public EndPoint endPoint = null;
 
         /// <summary>
         /// Size of receive buffer
