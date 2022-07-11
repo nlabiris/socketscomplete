@@ -1,23 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Teltonika.Codec.Model;
 
-namespace SocketsComplete {
-    internal static class Helper {
-        /// <summary>
-        /// Retrieves the data section of a packet
-        /// </summary>
-        /// <param name="buffer">Packet buffer</param>
-        /// <param name="index">Start index</param>
-        /// <returns>Object with data information of a package</returns>
-        public static PacketData GetData(byte[] buffer, int index) {
-            var packet = new PacketData();
-            packet.Length = BitConverter.ToUInt16(ReadBlock(buffer, index, 2), 0);
-            var data = ReadBlock(buffer, index + 2, packet.Length);
-            packet.Data = ReadBlock(data, 0, packet.Length);
-
-            return packet;
-        }
-
+namespace SocketsComplete
+{
+    internal static class Helper
+    {
         /// <summary>
         /// Retrieves a specific portion of the provided buffer
         /// </summary>
@@ -25,10 +11,12 @@ namespace SocketsComplete {
         /// <param name="offset">Byte offset</param>
         /// <param name="length">Portion length</param>
         /// <returns>Buffer portion</returns>
-        public static byte[] ReadBlock(byte[] buffer, int offset, int length) {
+        public static byte[] ReadBlock(byte[] buffer, int offset, int length)
+        {
             var block = new byte[length];
             var index = 0;
-            for (var i = offset; i < offset + length; i++) {
+            for (var i = offset; i < offset + length; i++)
+            {
                 block[index++] = buffer[i];
             }
             return block;
@@ -40,12 +28,29 @@ namespace SocketsComplete {
         /// <param name="buffer">Packet buffer</param>
         /// <param name="length">Bytes to count from start</param>
         /// <returns>Checksum</returns>
-        public static byte CountCheckSum(byte[] buffer, int length) {
+        public static byte CountCheckSum(byte[] buffer, int length)
+        {
             int sum = 0;
-            for (var i = 0; i < length; i++) {
+            for (var i = 0; i < length; i++)
+            {
                 sum += buffer[i];
             }
             return (byte)(sum & 0xFF);
+        }
+
+        public static ParseResults ParseImei(byte[] localBuffer)
+        {
+            var parseResults = new ParseResults();
+            var parser = new Parser();
+            var packet = parser.ParseImei(localBuffer);
+            if (packet == null)
+            {
+                return null;
+            }
+            parseResults.Imei = ((TcpImeiPacket)packet).Imei;
+            parseResults.Packet = packet;
+            parseResults.Response = new byte[] { 0x01 };
+            return parseResults;
         }
 
         /// <summary>
@@ -53,21 +58,19 @@ namespace SocketsComplete {
         /// </summary>
         /// <param name="localBuffer">Packet buffer</param>
         /// <returns>Parse result object</returns>
-        public static ParseResults ParseData(byte[] localBuffer) {
-            ParseResults parseResults = new ParseResults();
-            parseResults.ImeiBuffer = Helper.ReadBlock(localBuffer, 0, 8);
-            var cs = localBuffer[localBuffer.Length - 1];
+        public static ParseResults ParseData(byte[] localBuffer)
+        {
+            var parseResults = new ParseResults();
 
-            var packets = new List<PacketData>();
-
-            if (cs == Helper.CountCheckSum(localBuffer, localBuffer.Length - 1)) {
-                var lengthIndex = 8;
-                var parser = new Parser();
-                var packetData = Helper.GetData(localBuffer, lengthIndex);
-                packets.Add(packetData);
-                parser.ParsePacket(packets[0].Data);
-                parseResults.Packets.AddRange(parser.GetPackets());
+            var parser = new Parser();
+            var packet = parser.ParsePacket(localBuffer);
+            parseResults.Packet = packet;
+            parseResults.RawData = localBuffer;
+            if (parseResults.RawDataHex == "000000000000002E0C01060000002643414E2D434F4E54524F4C20636D64206578656375746564207375636365737366756C6C792E010000346F")
+            {
+                parseResults.Response = new byte[] { 0x01 };
             }
+
             return parseResults;
         }
     }

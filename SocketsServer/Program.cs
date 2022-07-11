@@ -2,15 +2,20 @@
 using System.Threading;
 using SocketsComplete;
 
-namespace SocketsServer {
-    internal class Program {
-        private static void Main(string[] args) {
+namespace SocketsServer
+{
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
             Server server = new Server();
             server.Start();
-            while (server.IsActive()) {
+            while (server.IsActive())
+            {
                 var stopString = Console.ReadLine();
 
-                if (stopString != null && stopString.ToLower() == "stop") {
+                if (stopString != null && stopString.ToLower() == "stop")
+                {
                     server.Stop();
                 }
 

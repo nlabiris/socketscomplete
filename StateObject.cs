@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace SocketsComplete {
-    public class StateObject {
+namespace SocketsComplete
+{
+    public class StateObject
+    {
         /// <summary>
         /// Client socket
         /// </summary>
@@ -16,7 +18,7 @@ namespace SocketsComplete {
         /// <summary>
         /// Size of receive buffer
         /// </summary>
-        public const int BufferSize = 1024;
+        public const int BufferSize = 65536;
 
         /// <summary>
         /// Receive buffer

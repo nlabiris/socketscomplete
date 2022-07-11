@@ -34,7 +34,7 @@ namespace SocketsComplete.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("666")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1200")]
         public int TCPPort {
             get {
                 return ((int)(this["TCPPort"]));
@@ -74,6 +74,15 @@ namespace SocketsComplete.Properties {
         public string ServerIP {
             get {
                 return ((string)(this["ServerIP"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("668")]
+        public int OutputControlPort {
+            get {
+                return ((int)(this["OutputControlPort"]));
             }
         }
     }

@@ -1,8 +1,10 @@
-﻿namespace SocketsComplete {
+﻿namespace Teltonika.Codec.Model
+{
     /// <summary>
     /// Data packet interface
     /// </summary>
-    internal interface IPacket {
+    public interface IPacket
+    {
 
     }
 }

@@ -6,7 +6,7 @@
       <Value Profile="(Default)">MySql</Value>
     </Setting>
     <Setting Name="TCPPort" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">666</Value>
+      <Value Profile="(Default)">1200</Value>
     </Setting>
     <Setting Name="UDPPort" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">667</Value>
@@ -19,6 +19,9 @@
     </Setting>
     <Setting Name="ServerIP" Type="System.String" Scope="Application">
       <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="OutputControlPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">668</Value>
     </Setting>
   </Settings>
 </SettingsFile>

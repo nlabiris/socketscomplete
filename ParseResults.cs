@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text;
+using Teltonika.Codec.Model;
 
-namespace SocketsComplete {
+namespace SocketsComplete
+{
     /// <summary>
     /// Results from parsing recieved data
     /// </summary>
-    internal class ParseResults {
+    internal class ParseResults
+    {
         /// <summary>
-        /// Constructor for ParseResults
+        /// Parsed packet
         /// </summary>
-        public ParseResults()
-        {
-            Packets = new List<IPacket>();
-        }
+        public IPacket Packet { get; set; }
 
         /// <summary>
-        /// List of parsed packets
+        /// Device IMEI
         /// </summary>
-        public List<IPacket> Packets { get; set; }
-
-        /// <summary>
-        /// Device IMEI buffer
-        /// </summary>
-        public byte[] ImeiBuffer { get; set; }
+        public long Imei { get; set; }
 
         /// <summary>
         /// Packet confirmation response
@@ -30,14 +24,17 @@ namespace SocketsComplete {
         public byte[] Response { get; set; }
 
         /// <summary>
-        /// Returns device imei as long type
+        /// Raw data
         /// </summary>
-        /// <returns>Device imei</returns>
-        public long Imei
-        {
+        public byte[] RawData { get; set; }
+
+        /// <summary>
+        /// Raw data
+        /// </summary>
+        public string RawDataHex {
             get
             {
-                return BitConverter.ToInt64(this.ImeiBuffer, 0);
+                return HexConverter.ByteArrayToHex(RawData);
             }
         }
     }

@@ -1,0 +1,10 @@
+C:\Users\sonic\source\repos\Teltonika.Codec\bin\Debug\Teltonika.Codec.dll
+C:\Users\sonic\source\repos\Teltonika.Codec\bin\Debug\Teltonika.Codec.pdb
+C:\Users\sonic\source\repos\Teltonika.Codec\obj\Debug\Teltonika.Codec.csproj.CoreCompileInputs.cache
+C:\Users\sonic\source\repos\Teltonika.Codec\obj\Debug\Teltonika.Codec.dll
+C:\Users\sonic\source\repos\Teltonika.Codec\obj\Debug\Teltonika.Codec.pdb
+C:\Users\sonic\source\repos\socketscomplete\Teltonika.Codec\bin\Debug\Teltonika.Codec.dll
+C:\Users\sonic\source\repos\socketscomplete\Teltonika.Codec\bin\Debug\Teltonika.Codec.pdb
+C:\Users\sonic\source\repos\socketscomplete\Teltonika.Codec\obj\Debug\Teltonika.Codec.csproj.CoreCompileInputs.cache
+C:\Users\sonic\source\repos\socketscomplete\Teltonika.Codec\obj\Debug\Teltonika.Codec.dll
+C:\Users\sonic\source\repos\socketscomplete\Teltonika.Codec\obj\Debug\Teltonika.Codec.pdb

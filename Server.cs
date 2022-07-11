@@ -1,24 +1,32 @@
-﻿namespace SocketsComplete {
+﻿namespace SocketsComplete
+{
     /// <summary>
     /// Base server to manipulate TCP and UDP servers
     /// </summary>
-    public class Server {
+    public class Server
+    {
         private TCPServer TCP;
         //private UDPServer UDP;
+        private TCPOutputControl TCPOutput;
 
         /// <summary>
         /// Constructor for server
         /// </summary>
-        public Server() {
-            TCP = new TCPServer();
+        public Server()
+        {
+            var OutputControlData = new OutputControlData();
+            TCP = new TCPServer(OutputControlData);
+            TCPOutput = new TCPOutputControl(OutputControlData);
             //UDP = new UDPServer();
         }
 
         /// <summary>
         /// Starts all servers
         /// </summary>
-        public void Start() {
+        public void Start()
+        {
             TCP.Start();
+            TCPOutput.Start();
             //UDP.Start();
         }
 
@@ -26,15 +34,18 @@
         /// Checks if any of the servers is running
         /// </summary>
         /// <returns>Any server is running</returns>
-        public bool IsActive() {
+        public bool IsActive()
+        {
             return TCP.Active;
         }
 
         /// <summary>
         /// Stops all servers
         /// </summary>
-        public void Stop() {
+        public void Stop()
+        {
             TCP.Stop();
+            TCPOutput.Stop();
             //UDP.Stop();
         }
     }

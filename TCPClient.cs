@@ -2,35 +2,47 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using SocketsComplete.Properties;
 
-namespace SocketsComplete {
+namespace SocketsComplete
+{
     internal class TCPClient
     {
         // ManualResetEvent instances signal completion.  
         private static ManualResetEvent connectDone = new ManualResetEvent(false);
         private static ManualResetEvent sendDone = new ManualResetEvent(false);
         private static ManualResetEvent receiveDone = new ManualResetEvent(false);
+        private Logger Logger = new Logger("Client");
 
         public void Transmit(Socket client, byte[] packet)
         {
             try
             {
                 Send(client, packet);
-                //Receive(client);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Logger.Console(e);
             }
         }
 
-        public StateObject CreateSocket()
+        public void Retrieve(Socket client)
+        {
+            try
+            {
+                Receive(client);
+            }
+            catch (Exception e)
+            {
+                Logger.Console(e);
+            }
+        }
+
+        public StateObject CreateSocket(string ip, int port)
         {
             // Establish the remote endpoint for the socket.
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Settings.Default.ServerIP);
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(ip);
             IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, Settings.Default.TCPPort);
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
             // Create a TCP/IP socket.
             Socket client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -52,7 +64,7 @@ namespace SocketsComplete {
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Logger.Console(e.ToString());
             }
         }
 
@@ -60,22 +72,22 @@ namespace SocketsComplete {
         {
             try
             {
-                Console.WriteLine("Connecting...");
-                
+                Logger.Console("Connecting...");
+
                 // Retrieve the socket from the state object.
                 Socket client = (Socket)ar.AsyncState;
 
                 // Complete the connection.
                 client.EndConnect(ar);
 
-                Console.WriteLine("Socket connected to {0}", client.RemoteEndPoint.ToString());
+                Logger.Console($"Socket connected to {client.RemoteEndPoint.ToString()}");
 
                 // Signal that the connection has been made.
                 connectDone.Set();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Logger.Console(e.ToString());
             }
         }
 
@@ -84,7 +96,7 @@ namespace SocketsComplete {
             // Close socket
             client.Shutdown(SocketShutdown.Both);
             client.Close();
-            Console.WriteLine("Socket closed");
+            Logger.Console("Socket closed");
 
         }
 
@@ -102,13 +114,13 @@ namespace SocketsComplete {
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Logger.Console(e.ToString());
             }
         }
 
         private void ReceiveCallback(IAsyncResult ar)
         {
-            Console.WriteLine("Receiving...");
+            Logger.Console("Receiving...");
             try
             {
                 StateObject state = (StateObject)ar.AsyncState;
@@ -116,24 +128,27 @@ namespace SocketsComplete {
                 byte[] localBuffer = null;
                 int bytesRead = client.EndReceive(ar);
 
-                if (bytesRead > 0) {
-                    Console.WriteLine("Message received...");
-
+                if (bytesRead > 0)
+                {
+                    Logger.Console("Message received...");
                     state.BytesReceived = bytesRead;
                     localBuffer = new byte[bytesRead];
                     Array.Copy(state.buffer, localBuffer, state.BytesReceived);
-                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
-                } else {
-                    Console.WriteLine("Message done...");
-
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : [{1:X}]", state.BytesReceived, BitConverter.ToString(state.buffer));
-                    //response = state;
+                    Logger.Console($"Read {state.BytesReceived} bytes from socket. \n Data : [{BitConverter.ToString(localBuffer):X}]");
+                    //client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
+                    receiveDone.Set();
+                }
+                else
+                {
+                    // it enters here if we shutdown the socket
+                    Logger.Console("Message done...");
+                    Logger.Console($"Read {state.BytesReceived} bytes from socket. \n Data : [{BitConverter.ToString(state.buffer):X}]");
                     receiveDone.Set();
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Logger.Console(e.ToString());
             }
         }
 
@@ -146,17 +161,17 @@ namespace SocketsComplete {
 
         private void SendCallback(IAsyncResult ar)
         {
-            Console.WriteLine("Sending...");
+            Logger.Console("Sending...");
             try
             {
                 Socket client = (Socket)ar.AsyncState;
                 int bytesSent = client.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to server.", bytesSent);
+                Logger.Console($"Sent {bytesSent} bytes to server.");
                 sendDone.Set();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Logger.Console(e.ToString());
             }
         }
     }

@@ -2,15 +2,18 @@
 using System.Globalization;
 using System.Text;
 
-namespace SocketsComplete {
-    internal static class HexConverter {
+namespace SocketsComplete
+{
+    public static class HexConverter
+    {
         /// <summary>
         /// Converts HEX to byte array
         /// </summary>
         /// <param name="hex">HEX</param>
         /// <returns>Byte array</returns>
-        public static byte[] HexToByteArray(string hex) {
-            return HexConverter.HexToByteArray(Encoding.Default.GetBytes(hex));
+        public static byte[] HexToByteArray(string hex)
+        {
+            return HexToByteArray(Encoding.Default.GetBytes(hex));
         }
 
         /// <summary>
@@ -18,11 +21,13 @@ namespace SocketsComplete {
         /// </summary>
         /// <param name="hex">HEX array</param>
         /// <returns>byte array</returns>
-        public static byte[] HexToByteArray(byte[] hex) {
-            if (hex == null) {
+        public static byte[] HexToByteArray(byte[] hex)
+        {
+            if (hex == null)
+            {
                 throw new ArgumentNullException("hex");
             }
-            return HexConverter.HexToByteArray(hex, 0, hex.Length);
+            return HexToByteArray(hex, 0, hex.Length);
         }
 
         /// <summary>
@@ -32,14 +37,17 @@ namespace SocketsComplete {
         /// <param name="offset">Offset</param>
         /// <param name="count">Element count</param>
         /// <returns>Byte array</returns>
-        public static byte[] HexToByteArray(byte[] hex, int offset, int count) {
-            if (hex == null) {
+        public static byte[] HexToByteArray(byte[] hex, int offset, int count)
+        {
+            if (hex == null)
+            {
                 throw new ArgumentNullException("hex");
             }
             byte[] buffer = new byte[count / 2];
 
-            for (int i = offset; i < offset + count; i += 2) {
-                buffer[(i - offset) / 2] = (byte)(HexConverter.GetDigitFromHex((char)hex[i]) * 16 + HexConverter.GetDigitFromHex((char)hex[i + 1]));
+            for (int i = offset; i < offset + count; i += 2)
+            {
+                buffer[(i - offset) / 2] = (byte)(GetDigitFromHex((char)hex[i]) * 16 + HexConverter.GetDigitFromHex((char)hex[i + 1]));
             }
             return buffer;
         }
@@ -49,10 +57,14 @@ namespace SocketsComplete {
         /// </summary>
         /// <param name="buffer">byte array</param>
         /// <returns>HEX string</returns>
-        public static string ByteArrayToHex(byte[] buffer) {
-            if (buffer != null) {
-                return HexConverter.ByteArrayToHex(buffer, 0, buffer.Length);
-            } else {
+        public static string ByteArrayToHex(byte[] buffer)
+        {
+            if (buffer != null)
+            {
+                return ByteArrayToHex(buffer, 0, buffer.Length);
+            }
+            else
+            {
                 return string.Empty;
             }
         }
@@ -64,14 +76,19 @@ namespace SocketsComplete {
         /// <param name="offset">Offset</param>
         /// <param name="count">Element count</param>
         /// <returns>HEX string</returns>
-        public static string ByteArrayToHex(byte[] buffer, int offset, int count) {
-            if (buffer != null) {
+        public static string ByteArrayToHex(byte[] buffer, int offset, int count)
+        {
+            if (buffer != null)
+            {
                 StringBuilder sb = new StringBuilder();
-                for (int i = offset; i < offset + count; i++) {
+                for (int i = offset; i < offset + count; i++)
+                {
                     sb.Append(buffer[i].ToString("X2", CultureInfo.InvariantCulture));
                 }
                 return sb.ToString();
-            } else {
+            }
+            else
+            {
                 return string.Empty;
             }
         }
@@ -81,10 +98,14 @@ namespace SocketsComplete {
         /// </summary>
         /// <param name="buffer">Byte array</param>
         /// <returns>HEX string</returns>
-        public static string ByteArrayToHexWithSpaces(byte[] buffer) {
-            if (buffer != null) {
-                return HexConverter.ByteArrayToHexWithSpaces(buffer, 0, buffer.Length);
-            } else {
+        public static string ByteArrayToHexWithSpaces(byte[] buffer)
+        {
+            if (buffer != null)
+            {
+                return ByteArrayToHexWithSpaces(buffer, 0, buffer.Length);
+            }
+            else
+            {
                 return string.Empty;
             }
         }
@@ -96,17 +117,23 @@ namespace SocketsComplete {
         /// <param name="offset">offset</param>
         /// <param name="count">Element count</param>
         /// <returns>HEX string</returns>
-        public static string ByteArrayToHexWithSpaces(byte[] buffer, int offset, int count) {
-            if (buffer != null) {
+        public static string ByteArrayToHexWithSpaces(byte[] buffer, int offset, int count)
+        {
+            if (buffer != null)
+            {
                 StringBuilder sb = new StringBuilder();
-                for (int i = offset; i < offset + count; i++) {
-                    if (i > offset) {
+                for (int i = offset; i < offset + count; i++)
+                {
+                    if (i > offset)
+                    {
                         sb.Append(" ");
                     }
                     sb.Append(buffer[i].ToString("X2", CultureInfo.InvariantCulture));
                 }
                 return sb.ToString();
-            } else {
+            }
+            else
+            {
                 return string.Empty;
             }
         }
@@ -116,8 +143,10 @@ namespace SocketsComplete {
         /// </summary>
         /// <param name="hexDigit">HEX value</param>
         /// <returns>decimal value</returns>
-        private static byte GetDigitFromHex(char hexDigit) {
-            switch (hexDigit) {
+        private static byte GetDigitFromHex(char hexDigit)
+        {
+            switch (hexDigit)
+            {
                 case '0':
                     return 0;
 

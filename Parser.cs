@@ -1,84 +1,77 @@
 ﻿using System;
-using System.Collections.Generic;
-using SocketsComplete.Data;
+using System.IO;
+using System.Text;
+using Teltonika.Codec;
+using Teltonika.Codec.Model;
 
-namespace SocketsComplete {
-    internal class Parser {
-        private List<IPacket> parsedPackets;
-
+namespace SocketsComplete
+{
+    internal class Parser
+    {
         /// <summary>
-        /// Constructor for parser
+        /// Parses the IMEI.
         /// </summary>
-        public Parser() {
-            this.parsedPackets = new List<IPacket>();
-        }
+        /// <param name="localBuffer">The local buffer.</param>
+        /// <returns></returns>
+        public IPacket ParseImei(byte[] localBuffer)
+        {
+            if (localBuffer == null)
+            {
+                throw new ArgumentNullException("buffer is null");
+            }
 
-        public List<IPacket> GetPackets() {
-            return this.parsedPackets;
+            var imeiLengthBlock = Helper.ReadBlock(localBuffer, 0, 2);
+            var imeiLength = imeiLengthBlock[1];
+            var imeiBlock = Helper.ReadBlock(localBuffer, 2, imeiLength);
+            var imeiString = Encoding.ASCII.GetString(imeiBlock, 0, imeiLength);
+            if (!long.TryParse(imeiString, out long imei))
+            {
+                return null;
+            }
+
+            return TcpImeiPacket.Create(imeiLength, imei);
         }
 
         /// <summary>
         /// Analyses packets
         /// </summary>
         /// <param name="buffer">Packet buffer</param>
-        public void ParsePacket(byte[] buffer, int offset = 0) {
-            if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+        public IPacket ParsePacket(byte[] buffer, int offset = 0)
+        {
+            TcpDataPacket packet = null;
+            if (buffer == null)
+            {
+                throw new ArgumentNullException("buffer is null");
             }
 
-            parsedPackets.Clear();
-
-            byte packetSize = buffer[offset];
-            Packet data = new Packet();
-            Gps gps = new Gps();
-            gps.Lat = BitConverter.ToSingle(buffer, offset + 0);
-            gps.Lng = BitConverter.ToSingle(buffer, offset + 4);
-            gps.Speed = BitConverter.ToInt16(buffer, offset + 8);
-            gps.Altitude = BitConverter.ToInt16(buffer, offset + 10);
-            data.Gps = gps;
-
-            parsedPackets.Add(data);
-        }
-
-        /// <summary>
-        /// Checks is the time valid
-        /// </summary>
-        /// <param name="time">time</param>
-        /// <returns>Is time valid</returns>
-        private static bool IsValid(DateTime time) {
-            DateTime now = DateTime.UtcNow;
-            if (now > time) {
-                return true;
-            } else {
-                return time.Subtract(now).TotalDays < 1;
+            var firstByte = Helper.ReadBlock(buffer, 0, 1);
+            if (firstByte[0] == 0xFF) // ping
+            {
+                return null;
             }
-        }
 
-        /// <summary>
-        /// Parses time
-        /// </summary>
-        /// <param name="buffer">Data buffer</param>
-        /// <param name="offset">offset</param>
-        /// <returns>time</returns>
-        private static DateTime ParseTime(byte[] buffer, int offset) {
-            uint dif = BitConverter.ToUInt32(buffer, offset) >> 4;
-            return new DateTime(2008, 1, 1).AddSeconds(dif * 2);
-        }
+            var preambleLengthBlock = Helper.ReadBlock(buffer, 0, 8);
 
-        /// <summary>
-        /// Displays detailed data to log
-        /// </summary>
-        /// <param name="buffer">Packet buffer</param>
-        /// <param name="startIndex">Start index</param>
-        /// <param name="length">Length</param>
-        private void DisplayDetailedData(byte[] buffer, int startIndex, int length) {
-            if (buffer.Length <= startIndex) {
-                startIndex = buffer.Length - 1;
+            var preamble = BytesSwapper.Swap(BitConverter.ToInt32(preambleLengthBlock, 0));
+            var length = BytesSwapper.Swap(BitConverter.ToInt32(preambleLengthBlock, 4)) + 4; // + 4 crc bytes
+
+            if (preamble != 0)
+            {
+                throw new NotSupportedException();
             }
-            if (startIndex + length > buffer.Length) {
-                length = buffer.Length - startIndex;
+
+            using (var reader = new ReverseBinaryReader(new MemoryStream(buffer)))
+            {
+                var decoder = new DataDecoder(reader);
+                packet = decoder.DecodeTcpData();
             }
-            Console.WriteLine(HexConverter.ByteArrayToHex(buffer, startIndex, length));
+
+            if (packet.codecId == 12)
+            {
+                return null;
+            }
+
+            return packet;
         }
     }
 }
